@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>🌬 Podersdorf Wind</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #f5f7fa;
+}
+
+h1 {
+    text-align: center;
+    color: #1f4e78;
+}
+
+#update {
+    text-align: center;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+th {
+    background: #1f4e78;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.wind {
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.gust {
+    font-weight: bold;
+    color: #cc3300;
+}
+
+.temp {
+    color: #008000;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+
+    th, td {
+        font-size: 14px;
+        padding: 6px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌬 Podersdorf Wind aktuell</h1>
+
+<div id="update">Lade Daten...</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Zeit</th>
+            <th>Richtung</th>
+            <th>Wind</th>
+            <th>Böen</th>
+            <th>Temperatur</th>
+        </tr>
+    </thead>
+    <tbody id="windData">
+    </tbody>
+</table>
+
+<script>
+
+async function ladeWinddaten() {
+
+    try {
+
+        const response =
+            await fetch(
+                "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=10"
+            );
+
+        const daten = await response.json();
+
+        const tbody = document.getElementById("windData");
+        tbody.innerHTML = "";
+
+        daten.forEach(ds => {
+
+            const zeit =
+                new Date(ds.datetime)
+                .toLocaleTimeString(
+                    "de-AT",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: "Europe/Vienna"
+                    }
+                );
+
+            const row = `
+                <tr>
+                    <td>${zeit}</td>
+                    <td>${ds.direction}</td>
+                    <td class="wind">${ds.avg} kn</td>
+                    <td class="gust">${ds.gust} kn</td>
+                    <td class="temp">${ds.temp} °C</td>
+                </tr>
+            `;
+
+            tbody.insertAdjacentHTML("beforeend", row);
+
+        });
+
+        document.getElementById("update").innerHTML =
+            "Letzte Aktualisierung: " +
+            new Date().toLocaleTimeString(
+                "de-AT",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+
+    } catch(error) {
+
+        document.getElementById("update").innerHTML =
+            "❌ Fehler beim Laden der Winddaten";
+
+        console.error(error);
+    }
+}
+
+ladeWinddaten();
+
+/* Automatische Aktualisierung alle 60 Sekunden */
+setInterval(ladeWinddaten, 60000);
+
+</script>
+
+</body>
+</html>
