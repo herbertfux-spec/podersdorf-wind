@@ -1,6 +1,9 @@
 name: Update Wind Data
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '*/1 * * * *'
   workflow_dispatch:
@@ -27,6 +30,7 @@ jobs:
 
           git add wind.json
 
+          # Commit nur wenn sich die Datei geändert hat
           git diff --staged --quiet || git commit -m "Update wind data"
 
           git push
