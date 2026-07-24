@@ -70,6 +70,45 @@ tr:nth-child(even){
 
 <script>
 
+function windFarbe(kn) {
+
+    // <10 kt → hellgrau
+    if (kn < 10) return "#d9d9d9";
+
+    // 12–20 kt → hellgrün → dunkelgrün
+    if (kn >= 12 && kn <= 20) {
+        const t = (kn - 12) / (20 - 12); 
+        const r = Math.round(200 - t * 120);
+        const g = Math.round(255 - t * 155);
+        const b = Math.round(200 - t * 120);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // 20–30 kt → dunkelgelb → dunkelorange
+    if (kn > 20 && kn <= 30) {
+        const t = (kn - 20) / (30 - 20);
+        const r = Math.round(220 - t * 80);
+        const g = Math.round(200 - t * 140);
+        const b = Math.round(60 - t * 60);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // 30–37 kt → hellviolett → dunkelviolett
+    if (kn > 30 && kn <= 37) {
+        const t = (kn - 30) / (37 - 30);
+        const r = Math.round(220 - t * 120);
+        const g = Math.round(180 - t * 160);
+        const b = Math.round(255 - t * 100);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // >37 kt → tiefviolett
+    if (kn > 37) return "#4b0082";
+
+    // Standardfarbe (10–12 kt)
+    return "inherit";
+}
+
 async function ladeDaten(){
 
     const response = await fetch("wind.json?t=" + Date.now());
@@ -92,16 +131,11 @@ async function ladeDaten(){
 
         html += `
         <tr>
-            html += `
-<tr>
-    <td>${zeit}</td>
-    <td>${ds.direction}</td>
-    <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
-    <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
-    <td>${ds.temp} °C</td>
-</tr>
-`;
-
+            <td>${zeit}</td>
+            <td>${ds.direction}</td>
+            <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
+            <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
+            <td>${ds.temp} °C</td>
         </tr>
         `;
     });
@@ -118,40 +152,6 @@ ladeDaten();
 setInterval(ladeDaten,60000);
 
 </script>
-
-function windFarbe(kn) {
-    if (kn < 10) return "#d9d9d9";
-
-    if (kn >= 12 && kn <= 20) {
-        const t = (kn - 12) / (20 - 12); 
-        const r = Math.round(200 - t * 120);
-        const g = Math.round(255 - t * 155);
-        const b = Math.round(200 - t * 120);
-        return `rgb(${r},${g},${b})`;
-    }
-
-    if (kn > 20 && kn <= 30) {
-        const t = (kn - 20) / (30 - 20);
-        const r = Math.round(220 - t * 80);
-        const g = Math.round(200 - t * 140);
-        const b = Math.round(60 - t * 60);
-        return `rgb(${r},${g},${b})`;
-    }
-
-    if (kn > 30 && kn <= 37) {
-        const t = (kn - 30) / (37 - 30);
-        const r = Math.round(220 - t * 120);
-        const g = Math.round(180 - t * 160);
-        const b = Math.round(255 - t * 100);
-        return `rgb(${r},${g},${b})`;
-    }
-
-    if (kn > 37) return "#4b0082";
-
-    return "inherit";
-}
-
-async function ladeDaten(){
 
 </body>
 </html>
