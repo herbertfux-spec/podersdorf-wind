@@ -39,19 +39,19 @@ th{
 
 td{
     text-align:center;
-    padding:4px 8px;      /* mittel schmal */
+    padding:4px 8px;
     border-bottom:1px solid #ddd;
     line-height:1.15;
 }
 
 tr{
-    height:30px;          /* mittlere Zeilenhöhe */
+    height:30px;
 }
 
 /* Animierte Pfeile */
 .arrow {
     display:inline-block;
-    font-size:20px;       /* etwas kleiner */
+    font-size:20px;
     transition: transform 0.4s ease-in-out;
     animation: windPulse 2.2s infinite ease-in-out;
 }
@@ -105,7 +105,7 @@ function windFarbe(kn) {
     if (kn >= 10 && kn <= 11) return "#d9d9d9";
 
     if (kn >= 12 && kn <= 20) {
-        const t = (kn - 12) / (20 - 12); 
+        const t = (kn - 12) / (20 - 12);
         const r = Math.round(200 - t * 120);
         const g = Math.round(255 - t * 155);
         const b = Math.round(200 - t * 120);
@@ -114,4 +114,104 @@ function windFarbe(kn) {
 
     if (kn > 20 && kn <= 30) {
         const t = (kn - 20) / (30 - 20);
-        const r =
+        const r = Math.round(220 - t * 80);
+        const g = Math.round(200 - t * 140);
+        const b = Math.round(60 - t * 60);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    if (kn > 30 && kn <= 37) {
+        const t = (kn - 30) / (37 - 30);
+        const r = Math.round(220 - t * 120);
+        const g = Math.round(180 - t * 160);
+        const b = Math.round(255 - t * 100);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    if (kn > 37) return "#4b0082";
+
+    return "inherit";
+}
+
+/* Windpfeile drehen nach Gradzahl */
+function windHimmelsrichtung(deg){
+
+    let arrow = "";
+
+    if (deg >= 337.5 || deg < 22.5) arrow = "↑";
+    else if (deg >= 22.5 && deg < 67.5) arrow = "↗";
+    else if (deg >= 67.5 && deg < 112.5) arrow = "→";
+    else if (deg >= 112.5 && deg < 157.5) arrow = "↘";
+    else if (deg >= 157.5 && deg < 202.5) arrow = "↓";
+    else if (deg >= 202.5 && deg < 247.5) arrow = "↙";
+    else if (deg >= 247.5 && deg < 292.5) arrow = "←";
+    else if (deg >= 292.5 && deg < 337.5) arrow = "↖";
+
+    return `
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="arrow-box">
+                <span class="arrow" style="transform:rotate(${deg}deg)">
+                    ${arrow}
+                </span>
+            </div>
+            <div style="font-size:12px; margin-top:2px;">
+                ${Math.round(deg)}°
+            </div>
+        </div>
+    `;
+}
+
+/* Daten laden */
+async function ladeDaten(){
+
+    try {
+        const response = await fetch("wind.json?t=" + Date.now());
+        const daten = await response.json();
+
+        let html = "";
+
+        daten.forEach((ds, i) => {
+
+            if (i % 2 !== 0) return;   /* nur jeden 2. Datensatz anzeigen */
+
+            const zeit =
+                new Date(ds.datetime)
+                .toLocaleTimeString(
+                    "de-AT",
+                    {
+                        hour:"2-digit",
+                        minute:"2-digit",
+                        timeZone:"Europe/Vienna"
+                    }
+                );
+
+            html += `
+            <tr>
+                <td>${zeit}</td>
+                <td>${windHimmelsrichtung(ds.directionDegree)}</td>
+                <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
+                <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
+                <td>${ds.temp} °C</td>
+            </tr>
+            `;
+        });
+
+        document.getElementById("wind").innerHTML = html;
+
+        document.getElementById("update").innerHTML =
+            "Aktualisiert: " +
+            new Date().toLocaleString("de-AT");
+
+    } catch (e) {
+        document.getElementById("update").innerHTML = "Fehler beim Laden der Daten";
+        console.error(e);
+    }
+}
+
+ladeDaten();
+setInterval(ladeDaten,60000);
+
+</script>
+
+</body>
+</html>
