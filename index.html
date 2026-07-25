@@ -46,6 +46,20 @@ td{
 tr:nth-child(even){
     background:#f2f2f2;
 }
+
+/* Animierte Pfeile */
+.arrow {
+    display:inline-block;
+    font-size:22px;
+    transition: transform 0.4s ease-in-out;
+    animation: windPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes windPulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
 </style>
 </head>
 
@@ -70,12 +84,11 @@ tr:nth-child(even){
 
 <script>
 
+/* Farbskala für Wind */
 function windFarbe(kn) {
 
-    // <10 kt → hellgrau
     if (kn < 10) return "#d9d9d9";
 
-    // 12–20 kt → hellgrün → dunkelgrün
     if (kn >= 12 && kn <= 20) {
         const t = (kn - 12) / (20 - 12); 
         const r = Math.round(200 - t * 120);
@@ -84,7 +97,6 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // 20–30 kt → dunkelgelb → dunkelorange
     if (kn > 20 && kn <= 30) {
         const t = (kn - 20) / (30 - 20);
         const r = Math.round(220 - t * 80);
@@ -93,7 +105,6 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // 30–37 kt → hellviolett → dunkelviolett
     if (kn > 30 && kn <= 37) {
         const t = (kn - 30) / (37 - 30);
         const r = Math.round(220 - t * 120);
@@ -102,13 +113,30 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // >37 kt → tiefviolett
     if (kn > 37) return "#4b0082";
 
-    // Standardfarbe (10–12 kt)
     return "inherit";
 }
 
+/* Himmelsrichtungs-Pfeile + Rotation + Animation */
+function windHimmelsrichtung(deg){
+
+    let arrow = "↑";
+    let rotate = 0;
+
+    if (deg >= 337.5 || deg < 22.5) { arrow = "↑"; rotate = 0; }
+    else if (deg >= 22.5 && deg < 67.5) { arrow = "↗"; rotate = 45; }
+    else if (deg >= 67.5 && deg < 112.5) { arrow = "→"; rotate = 90; }
+    else if (deg >= 112.5 && deg < 157.5) { arrow = "↘"; rotate = 135; }
+    else if (deg >= 157.5 && deg < 202.5) { arrow = "↓"; rotate = 180; }
+    else if (deg >= 202.5 && deg < 247.5) { arrow = "↙"; rotate = 225; }
+    else if (deg >= 247.5 && deg < 292.5) { arrow = "←"; rotate = 270; }
+    else if (deg >= 292.5 && deg < 337.5) { arrow = "↖"; rotate = 315; }
+
+    return `<span class="arrow" style="transform:rotate(${rotate}deg)">${arrow}</span>`;
+}
+
+/* Daten laden */
 async function ladeDaten(){
 
     const response = await fetch("wind.json?t=" + Date.now());
@@ -132,7 +160,7 @@ async function ladeDaten(){
         html += `
         <tr>
             <td>${zeit}</td>
-            <td>${ds.direction}</td>
+            <td>${windHimmelsrichtung(ds.direction)}</td>
             <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
             <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
             <td>${ds.temp} °C</td>
@@ -148,7 +176,6 @@ async function ladeDaten(){
 }
 
 ladeDaten();
-
 setInterval(ladeDaten,60000);
 
 </script>
