@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '*/2 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
 
           git add wind.json
 
-          # Commit nur wenn sich die Datei geändert hat
-          git diff --staged --quiet || git commit -m "Update wind data"
+          # Immer committen, auch wenn sich nichts geändert hat
+          git commit -m "Update wind data" || true
 
           git push
