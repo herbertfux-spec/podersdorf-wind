@@ -30,7 +30,6 @@ jobs:
 
           git add wind.json
 
-          # Commit IMMER ausführen, auch wenn Datei gleich ist
           git commit -m "Update wind data" || true
 
           git push
