@@ -100,13 +100,9 @@ tr:nth-child(even){
 /* Farbskala für Wind */
 function windFarbe(kn) {
 
-    // 0–9 kt → weiß
     if (kn <= 9) return "#ffffff";
-
-    // 10–11 kt → hellgrau
     if (kn >= 10 && kn <= 11) return "#d9d9d9";
 
-    // 12–20 kt → hellgrün → dunkelgrün
     if (kn >= 12 && kn <= 20) {
         const t = (kn - 12) / (20 - 12); 
         const r = Math.round(200 - t * 120);
@@ -115,7 +111,6 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // 20–30 kt → dunkelgelb → dunkelorange
     if (kn > 20 && kn <= 30) {
         const t = (kn - 20) / (30 - 20);
         const r = Math.round(220 - t * 80);
@@ -124,7 +119,6 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // 30–37 kt → hellviolett → dunkelviolett
     if (kn > 30 && kn <= 37) {
         const t = (kn - 30) / (37 - 30);
         const r = Math.round(220 - t * 120);
@@ -133,14 +127,12 @@ function windFarbe(kn) {
         return `rgb(${r},${g},${b})`;
     }
 
-    // >37 kt → tiefviolett
     if (kn > 37) return "#4b0082";
 
     return "inherit";
 }
 
-
-/* 8-Sektoren Windrichtung + perfektes Kästchen + zentrierte Darstellung */
+/* 8-Sektoren Windrichtung */
 function windHimmelsrichtung(deg){
 
     let arrow = "";
@@ -175,7 +167,9 @@ async function ladeDaten(){
 
     let html = "";
 
-    daten.forEach(ds => {
+    daten.forEach((ds, i) => {
+
+        if (i % 2 !== 0) return;   // nur jeden 2. Datensatz anzeigen
 
         const zeit =
             new Date(ds.datetime)
