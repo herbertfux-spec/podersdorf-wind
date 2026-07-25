@@ -33,3 +33,4 @@ jobs:
           git commit -m "Update wind data" || true
 
           git push
+
