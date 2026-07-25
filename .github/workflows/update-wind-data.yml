@@ -10,16 +10,22 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
+
   update:
     runs-on: ubuntu-latest
 
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch wind data (with retries)
+      - name: Download wind data (with retries)
         run: |
           for i in {1..5}; do
             echo "Attempt $i to download wind data..."
@@ -28,20 +34,44 @@ jobs:
           done
 
       - name: Validate JSON
+        run: jq empty wind.json
+
+      - name: Check if wind.json changed
+        id: check
         run: |
-          echo "Validating JSON..."
-          jq empty wind.json
+          if git diff --quiet wind.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit only if changed
+        if: steps.check.outputs.changed == 'true'
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-          if git diff --quiet wind.json; then
-            echo "No changes in wind.json – skipping commit."
-            exit 0
-          fi
-
           git add wind.json
           git commit -m "Update wind data"
           git push
+
+  deploy:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Disable Jekyll
+        run: echo "" > .nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Pages
+        uses: actions/build-pages@v5
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
