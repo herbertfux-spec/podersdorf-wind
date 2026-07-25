@@ -145,8 +145,16 @@ function windHimmelsrichtung(deg){
 
     const d = dirs[index];
 
-    return `<span class="arrow">${d.arrow}</span> <span style="font-size:12px">${d.name}</span>`;
+    return `
+        <div class="arrow-box">
+            <span class="arrow">${d.arrow}</span>
+        </div>
+        <div style="font-size:12px; margin-top:2px;">
+            ${d.name}
+        </div>
+    `;
 }
+
 
 /* Daten laden */
 async function ladeDaten(){
