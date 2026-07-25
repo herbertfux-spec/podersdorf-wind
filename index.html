@@ -131,7 +131,7 @@ function windFarbe(kn) {
     return "inherit";
 }
 
-/* 8-Sektoren Windrichtung + Kästchen */
+/* 8-Sektoren Windrichtung + perfektes Kästchen + zentrierte Darstellung */
 function windHimmelsrichtung(deg){
 
     let arrow = "";
@@ -147,11 +147,13 @@ function windHimmelsrichtung(deg){
     else if (deg >= 292.5 && deg < 337.5) { arrow = "↖"; text = "NW"; }
 
     return `
-        <div class="arrow-box">
-            <span class="arrow">${arrow}</span>
-        </div>
-        <div style="font-size:12px; margin-top:2px;">
-            ${text}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="arrow-box">
+                <span class="arrow">${arrow}</span>
+            </div>
+            <div style="font-size:12px; margin-top:2px;">
+                ${text}
+            </div>
         </div>
     `;
 }
