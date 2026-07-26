@@ -10,8 +10,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
 
@@ -25,7 +23,6 @@ jobs:
       - name: Download wind data (with retries)
         run: |
           for i in {1..5}; do
-            echo "Attempt $i to download wind data..."
             curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o wind.json && break
             sleep 2
           done
@@ -41,25 +38,3 @@ jobs:
           git add wind.json
           git commit -m "Update wind data" || echo "No changes"
           git push
-
-  deploy:
-    needs: update
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create .nojekyll
-        run: echo "" > .nojekyll
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
