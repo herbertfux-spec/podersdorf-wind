@@ -12,7 +12,6 @@ permissions:
   contents: write
 
 jobs:
-
   update:
     runs-on: ubuntu-latest
 
@@ -23,12 +22,12 @@ jobs:
       - name: Download wind data (with retries)
         run: |
           for i in {1..5}; do
-            curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o wind.json && break
+            curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o $GITHUB_WORKSPACE/wind.json && break
             sleep 2
           done
 
       - name: Validate JSON
-        run: jq empty wind.json
+        run: jq empty $GITHUB_WORKSPACE/wind.json
 
       - name: Commit wind.json
         run: |
