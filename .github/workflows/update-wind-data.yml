@@ -25,7 +25,6 @@ jobs:
       - name: Download wind data (with retries)
         run: |
           for i in {1..5}; do
-            echo "Attempt $i to download wind data..."
             curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o wind.json && break
             sleep 2
           done
@@ -33,13 +32,13 @@ jobs:
       - name: Validate JSON
         run: jq empty wind.json
 
-      - name: Commit wind.json (always)
+      - name: Commit wind.json
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
           git add wind.json
-          git commit -m "Update wind data" || echo "No changes to commit"
+          git commit -m "Update wind data" || echo "No changes"
           git push
 
   deploy:
@@ -50,14 +49,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Disable Jekyll
+      - name: Create .nojekyll
         run: echo "" > .nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Build with Pages
-        uses: actions/build-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
