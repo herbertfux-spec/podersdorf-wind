@@ -47,33 +47,6 @@ td{
 tr{
     height:30px;
 }
-
-/* Animierte Pfeile */
-.arrow {
-    display:inline-block;
-    font-size:20px;
-    transition: transform 0.4s ease-in-out;
-    animation: windPulse 2.2s infinite ease-in-out;
-}
-
-@keyframes windPulse {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.25); }
-    100% { transform: scale(1); }
-}
-
-/* Kompaktere Pfeilbox */
-.arrow-box {
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    width:28px;
-    height:28px;
-    border:1px solid #999;
-    border-radius:6px;
-    background:#fff;
-    margin:auto;
-}
 </style>
 </head>
 
@@ -98,56 +71,119 @@ tr{
 
 <script>
 
-/* Farbskala für Wind */
+/* Farbskala */
 function windFarbe(kn) {
-
     if (kn <= 9) return "#ffffff";
-    if (kn >= 10 && kn <= 11) return "#d9d9d9";
-
-    if (kn >= 12 && kn <= 20) {
-        const t = (kn - 12) / (20 - 12);
-        const r = Math.round(200 - t * 120);
-        const g = Math.round(255 - t * 155);
-        const b = Math.round(200 - t * 120);
-        return `rgb(${r},${g},${b})`;
+    if (kn <= 11) return "#d9d9d9";
+    if (kn <= 20) {
+        const t = (kn - 12) / 8;
+        return `rgb(${200 - t*120},${255 - t*155},${200 - t*120})`;
     }
-
-    if (kn > 20 && kn <= 30) {
-        const t = (kn - 20) / (30 - 20);
-        const r = Math.round(220 - t * 80);
-        const g = Math.round(200 - t * 140);
-        const b = Math.round(60 - t * 60);
-        return `rgb(${r},${g},${b})`;
+    if (kn <= 30) {
+        const t = (kn - 20) / 10;
+        return `rgb(${220 - t*80},${200 - t*140},${60 - t*60})`;
     }
-
-    if (kn > 30 && kn <= 37) {
-        const t = (kn - 30) / (37 - 30);
-        const r = Math.round(220 - t * 120);
-        const g = Math.round(180 - t * 160);
-        const b = Math.round(255 - t * 100);
-        return `rgb(${r},${g},${b})`;
+    if (kn <= 37) {
+        const t = (kn - 30) / 7;
+        return `rgb(${220 - t*120},${180 - t*160},${255 - t*100})`;
     }
-
-    if (kn > 37) return "#4b0082";
-
-    return "inherit";
+    return "#4b0082";
 }
 
-/* 16-teilige Windrichtung + Pfeil */
+/* 16-teilige Windrichtung */
 function windHimmelsrichtung16(deg){
+    if (deg >= 348.75 || deg < 11.25) return "N";
+    if (deg < 33.75) return "NNO";
+    if (deg < 56.25) return "NO";
+    if (deg < 78.75) return "ONO";
+    if (deg < 101.25) return "O";
+    if (deg < 123.75) return "OSO";
+    if (deg < 146.25) return "SO";
+    if (deg < 168.75) return "SSO";
+    if (deg < 191.25) return "S";
+    if (deg < 213.75) return "SSW";
+    if (deg < 236.25) return "SW";
+    if (deg < 258.75) return "WSW";
+    if (deg < 281.25) return "W";
+    if (deg < 303.75) return "WNW";
+    if (deg < 326.25) return "NW";
+    return "NNW";
+}
 
-    if (deg >= 348.75 || deg < 11.25) return {arrow:"↑", txt:"N"};
-    if (deg >= 11.25 && deg < 33.75) return {arrow:"↗", txt:"NNO"};
-    if (deg >= 33.75 && deg < 56.25) return {arrow:"↗", txt:"NO"};
-    if (deg >= 56.25 && deg < 78.75) return {arrow:"↗", txt:"ONO"};
-    if (deg >= 78.75 && deg < 101.25) return {arrow:"→", txt:"O"};
-    if (deg >= 101.25 && deg < 123.75) return {arrow:"↘", txt:"OSO"};
-    if (deg >= 123.75 && deg < 146.25) return {arrow:"↘", txt:"SO"};
-    if (deg >= 146.25 && deg < 168.75) return {arrow:"↘", txt:"SSO"};
-    if (deg >= 168.75 && deg < 191.25) return {arrow:"↓", txt:"S"};
-    if (deg >= 191.25 && deg < 213.75) return {arrow:"↙", txt:"SSW"};
-    if (deg >= 213.75 && deg < 236.25) return {arrow:"↙", txt:"SW"};
-    if (deg >= 236.25 && deg < 258.75) return {arrow:"↙", txt:"WSW"};
-    if (deg >= 258.75 && deg < 281.25) return {arrow:"←", txt:"W"};
-    if (deg >= 281.25 && deg < 303.75) return {arrow:"↖", txt:"WNW"};
-    if (deg >= 303.75 && deg < 326.25) return {arrow:"↖", txt:"NW"};
+/* Kompassrad SVG */
+function windKompassSVG(deg){
+    const txt = windHimmelsrichtung16(deg);
+
+    return `
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <svg width="60" height="60" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" stroke="#1f4e78" stroke-width="3" fill="white"/>
+
+                <g stroke="#1f4e78" stroke-width="2">
+                    ${[...Array(16)].map((_,i)=>{
+                        const a = (i*22.5) * Math.PI/180;
+                        const x1 = 50 + Math.cos(a)*40;
+                        const y1 = 50 + Math.sin(a)*40;
+                        const x2 = 50 + Math.cos(a)*45;
+                        const y2 = 50 + Math.sin(a)*45;
+                        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+                    }).join("")}
+                </g>
+
+                <g transform="rotate(${deg} 50 50)">
+                    <polygon points="50,15 45,30 55,30" fill="#d9534f"/>
+                    <line x1="50" y1="30" x2="50" y2="70" stroke="#d9534f" stroke-width="3"/>
+                </g>
+            </svg>
+
+            <div style="font-size:12px; margin-top:4px;">
+                ${txt}
+            </div>
+        </div>
+    `;
+}
+
+/* Daten laden */
+async function ladeDaten(){
+    try {
+        const response = await fetch("wind.json?t=" + Date.now());
+        const daten = await response.json();
+
+        let html = "";
+
+        daten.forEach((ds, i) => {
+            if (i % 2 !== 0) return;
+
+            const zeit = new Date(ds.datetime).toLocaleTimeString("de-AT", {
+                hour:"2-digit",
+                minute:"2-digit",
+                timeZone:"Europe/Vienna"
+            });
+
+            html += `
+            <tr>
+                <td>${zeit}</td>
+                <td>${windKompassSVG(ds.directionDegree)}</td>
+                <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
+                <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
+                <td>${ds.temp} °C</td>
+            </tr>`;
+        });
+
+        document.getElementById("wind").innerHTML = html;
+        document.getElementById("update").innerHTML =
+            "Aktualisiert: " + new Date().toLocaleString("de-AT");
+
+    } catch (e) {
+        document.getElementById("update").innerHTML = "Fehler beim Laden der Daten";
+        console.error(e);
+    }
+}
+
+ladeDaten();
+setInterval(ladeDaten,60000);
+
+</script>
+
+</body>
+</html>
