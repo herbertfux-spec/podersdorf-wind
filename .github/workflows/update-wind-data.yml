@@ -25,6 +25,7 @@ jobs:
       - name: Download wind data (with retries)
         run: |
           for i in {1..5}; do
+            echo "Attempt $i to download wind data..."
             curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o wind.json && break
             sleep 2
           done
