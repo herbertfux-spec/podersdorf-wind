@@ -133,85 +133,21 @@ function windFarbe(kn) {
     return "inherit";
 }
 
-/* Windpfeile drehen nach Gradzahl */
-function windHimmelsrichtung(deg){
+/* 16-teilige Windrichtung + Pfeil */
+function windHimmelsrichtung16(deg){
 
-    let arrow = "";
-
-    if (deg >= 337.5 || deg < 22.5) arrow = "↑";
-    else if (deg >= 22.5 && deg < 67.5) arrow = "↗";
-    else if (deg >= 67.5 && deg < 112.5) arrow = "→";
-    else if (deg >= 112.5 && deg < 157.5) arrow = "↘";
-    else if (deg >= 157.5 && deg < 202.5) arrow = "↓";
-    else if (deg >= 202.5 && deg < 247.5) arrow = "↙";
-    else if (deg >= 247.5 && deg < 292.5) arrow = "←";
-    else if (deg >= 292.5 && deg < 337.5) arrow = "↖";
-
-    return `
-        <div style="display:flex; flex-direction:column; align-items:center;">
-            <div class="arrow-box">
-                <span class="arrow" style="transform:rotate(${deg}deg)">
-                    ${arrow}
-                </span>
-            </div>
-            <div style="font-size:12px; margin-top:2px;">
-                ${Math.round(deg)}°
-            </div>
-        </div>
-    `;
-}
-
-/* Daten laden */
-async function ladeDaten(){
-
-    try {
-        const response = await fetch("wind.json?t=" + Date.now());
-        const daten = await response.json();
-
-        let html = "";
-
-        daten.forEach((ds, i) => {
-
-            if (i % 2 !== 0) return;   /* nur jeden 2. Datensatz anzeigen */
-
-            const zeit =
-                new Date(ds.datetime)
-                .toLocaleTimeString(
-                    "de-AT",
-                    {
-                        hour:"2-digit",
-                        minute:"2-digit",
-                        timeZone:"Europe/Vienna"
-                    }
-                );
-
-            html += `
-            <tr>
-                <td>${zeit}</td>
-                <td>${windHimmelsrichtung(ds.directionDegree)}</td>
-                <td style="background:${windFarbe(ds.avg)}">${ds.avg} kn</td>
-                <td style="background:${windFarbe(ds.gust)}">${ds.gust} kn</td>
-                <td>${ds.temp} °C</td>
-            </tr>
-            `;
-        });
-
-        document.getElementById("wind").innerHTML = html;
-
-        document.getElementById("update").innerHTML =
-            "Aktualisiert: " +
-            new Date().toLocaleString("de-AT");
-
-    } catch (e) {
-        document.getElementById("update").innerHTML = "Fehler beim Laden der Daten";
-        console.error(e);
-    }
-}
-
-ladeDaten();
-setInterval(ladeDaten,60000);
-
-</script>
-
-</body>
-</html>
+    if (deg >= 348.75 || deg < 11.25) return {arrow:"↑", txt:"N"};
+    if (deg >= 11.25 && deg < 33.75) return {arrow:"↗", txt:"NNO"};
+    if (deg >= 33.75 && deg < 56.25) return {arrow:"↗", txt:"NO"};
+    if (deg >= 56.25 && deg < 78.75) return {arrow:"↗", txt:"ONO"};
+    if (deg >= 78.75 && deg < 101.25) return {arrow:"→", txt:"O"};
+    if (deg >= 101.25 && deg < 123.75) return {arrow:"↘", txt:"OSO"};
+    if (deg >= 123.75 && deg < 146.25) return {arrow:"↘", txt:"SO"};
+    if (deg >= 146.25 && deg < 168.75) return {arrow:"↘", txt:"SSO"};
+    if (deg >= 168.75 && deg < 191.25) return {arrow:"↓", txt:"S"};
+    if (deg >= 191.25 && deg < 213.75) return {arrow:"↙", txt:"SSW"};
+    if (deg >= 213.75 && deg < 236.25) return {arrow:"↙", txt:"SW"};
+    if (deg >= 236.25 && deg < 258.75) return {arrow:"↙", txt:"WSW"};
+    if (deg >= 258.75 && deg < 281.25) return {arrow:"←", txt:"W"};
+    if (deg >= 281.25 && deg < 303.75) return {arrow:"↖", txt:"WNW"};
+    if (deg >= 303.75 && deg < 326.25) return {arrow:"↖", txt:"NW"};
