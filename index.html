@@ -90,7 +90,7 @@ function windFarbe(kn) {
     return "#4b0082";
 }
 
-/* 16-teilige Windrichtung */
+/* 16-teilige Windrichtung (woher der Wind kommt) */
 function windHimmelsrichtung16(deg){
     if (deg >= 348.75 || deg < 11.25) return "N";
     if (deg < 33.75) return "NNO";
@@ -110,7 +110,7 @@ function windHimmelsrichtung16(deg){
     return "NNW";
 }
 
-/* Fetter Windpfeil */
+/* Fetter Pfeil – zeigt wohin der Wind WEHT */
 function windPfeilFett16(deg){
     const txt = windHimmelsrichtung16(deg);
 
@@ -130,7 +130,7 @@ function windPfeilFett16(deg){
                     font-size:28px;
                     font-weight:bold;
                     display:inline-block;
-                    transform:rotate(${deg}deg);
+                    transform:rotate(${deg + 180}deg);
                     transition:transform 0.3s ease-in-out;
                 ">
                     ↑
