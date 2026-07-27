@@ -1,9 +1,9 @@
-name: Update Wind Data (reactivated)
+name: Update Wind Data (reactivated v2)
 
 on:
-  # Cron neu aktiviert
+  # Cron reactivated v2
   schedule:
-    - cron: "*/2 * * * *"   # alle 2 Minuten
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,6 @@ jobs:
 
           echo "]" >> wind.json
 
-          # Timestamp hinzufügen, damit die Datei IMMER anders ist
           echo "// updated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> wind.json
 
       - name: Commit and push
