@@ -17,14 +17,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          path: repo-main
 
       - name: Fetch raw data
         run: |
-          curl -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o raw.json
+          curl -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o repo-main/raw.json
 
       - name: Generate cleaned wind.json
         run: |
-          echo "[" > wind.json
+          echo "[" > repo-main/wind.json
 
           jq -c '.[] | {
               datetime: .datetime,
@@ -32,34 +33,38 @@ jobs:
               gust: (.gust | tonumber),
               directionDegree: (.directionDegree | tonumber),
               temp: (.temp | tonumber)
-          }' raw.json | sed 's/$/,/' >> wind.json
+          }' repo-main/raw.json | sed 's/$/,/' >> repo-main/wind.json
 
-          sed -i '$ s/,$//' wind.json
-          echo "]" >> wind.json
+          sed -i '$ s/,$//' repo-main/wind.json
+          echo "]" >> repo-main/wind.json
 
       - name: Commit to main
         run: |
+          cd repo-main
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add wind.json
           git commit -m "Auto-update wind data" || true
           git push origin main
 
-      - name: Switch to gh-pages
-        run: |
-          git fetch origin gh-pages
-          git checkout gh-pages
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: repo-pages
 
-      - name: Copy wind.json from main
+      - name: Copy wind.json to gh-pages
         run: |
-          git checkout origin/main -- wind.json
+          cp repo-main/wind.json repo-pages/wind.json
+          cd repo-pages
           git add wind.json
           git commit -m "Update wind.json on gh-pages" || true
           git push origin gh-pages
 
       - name: Force GitHub Pages rebuild
         run: |
-          echo "updated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .pages-build-trigger
+          echo "updated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > repo-pages/.pages-build-trigger
+          cd repo-pages
           git add .pages-build-trigger
           git commit -m "Trigger GitHub Pages rebuild" || true
           git push origin gh-pages
