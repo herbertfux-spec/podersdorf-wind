@@ -1,5 +1,5 @@
 name: Update Wind Data (reactivated v3 - force schedule reload)
-
+# reload
 # Force GitHub to reload schedule trigger
 on: 
   schedule:
