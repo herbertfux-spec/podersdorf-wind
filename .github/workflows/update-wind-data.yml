@@ -1,11 +1,8 @@
 name: Update Wind Data
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: "*/2 * * * *"   # alle 2 Minuten
   workflow_dispatch:
 
 permissions:
@@ -19,21 +16,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download wind data (with retries)
+      - name: Fetch raw data from Nora API
         run: |
-          for i in {1..5}; do
-            curl -s -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o $GITHUB_WORKSPACE/wind.json && break
-            sleep 2
-          done
+          curl -L "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30" -o raw.json
 
-      - name: Validate JSON
-        run: jq empty $GITHUB_WORKSPACE/wind.json
+      - name: Generate cleaned wind.json
+        run: |
+          echo "[" > wind.json
 
-      - name: Commit wind.json
+          jq -c '.[] | {
+              datetime: .datetime,
+              avg: (.avg | tonumber),
+              gust: (.gust | tonumber),
+              directionDegree: (.directionDegree | tonumber),
+              temp: (.temp | tonumber)
+          }' raw.json >> wind.json
+
+          echo "]" >> wind.json
+
+          # Timestamp hinzufügen, damit die Datei IMMER anders ist
+          echo "// updated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> wind.json
+
+      - name: Commit and push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
           git add wind.json
-          git commit -m "Update wind data" || echo "No changes"
+          git commit -m "Auto-update wind data" || true
           git push
