@@ -1,6 +1,7 @@
-name: Update Wind Data
+name: Update Wind Data (reactivated)
 
 on:
+  # Cron neu aktiviert
   schedule:
     - cron: "*/2 * * * *"   # alle 2 Minuten
   workflow_dispatch:
