@@ -1,5 +1,4 @@
 name: Update Wind Data (reactivated v3 - force schedule reload)
-# reload
 
 on:
   schedule:
@@ -51,16 +50,19 @@ jobs:
 
       - name: Push wind.json to gh-pages
         run: |
-          # gh-pages holen
           git fetch origin gh-pages
-
-          # gh-pages auschecken
           git checkout gh-pages
 
           # wind.json aus main kopieren
           git checkout main -- wind.json
 
-          # committen und pushen
           git add wind.json
           git commit -m "Update wind.json on gh-pages" || true
+          git push origin gh-pages
+
+      - name: Force GitHub Pages rebuild
+        run: |
+          echo "updated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .pages-build-trigger
+          git add .pages-build-trigger
+          git commit -m "Trigger GitHub Pages rebuild" || true
           git push origin gh-pages
