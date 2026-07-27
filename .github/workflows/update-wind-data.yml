@@ -1,7 +1,7 @@
 name: Update Wind Data (reactivated v3 - force schedule reload)
 
 # Force GitHub to reload schedule trigger
-on:
+on: 
   schedule:
     - cron: "*/2 * * * *"   # every 2 minutes
   workflow_dispatch:
