@@ -1,13 +1,18 @@
-// rebuild 3
+// rebuild 4 – API liefert direkt ein Array
 
 async function loadWindData() {
     const url = "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30";
 
     try {
         const response = await fetch(url, { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error("API antwortet nicht korrekt");
+        }
+
         const json = await response.json();
 
-        // API liefert direkt ein Array, NICHT json.data
+        // API liefert direkt ein Array
         const data = json;
 
         renderWind(data);
