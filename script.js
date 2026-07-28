@@ -62,7 +62,7 @@ function renderWind(data) {
 
         tbody.appendChild(tr);
     });
-
+#
     const now = new Date();
     document.getElementById("update").innerText =
         "Aktualisiert: " +
