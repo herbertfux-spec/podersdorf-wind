@@ -1,4 +1,6 @@
 [
+{"datetime":"2026-07-28T07:40:00.000Z","avg":7,"gust":8,"directionDegree":0,"temp":24.4},
+{"datetime":"2026-07-28T07:35:00.000Z","avg":7,"gust":9,"directionDegree":0,"temp":24.3},
 {"datetime":"2026-07-28T07:30:00.000Z","avg":9,"gust":10,"directionDegree":0,"temp":24.5},
 {"datetime":"2026-07-28T07:25:00.000Z","avg":6,"gust":7,"directionDegree":0,"temp":24.5},
 {"datetime":"2026-07-28T07:20:00.000Z","avg":6,"gust":8,"directionDegree":270,"temp":24.4},
@@ -26,7 +28,5 @@
 {"datetime":"2026-07-28T05:30:00.000Z","avg":11,"gust":11,"directionDegree":270,"temp":21.4},
 {"datetime":"2026-07-28T05:25:00.000Z","avg":9,"gust":9,"directionDegree":0,"temp":21.2},
 {"datetime":"2026-07-28T05:20:00.000Z","avg":8,"gust":9,"directionDegree":0,"temp":21.3},
-{"datetime":"2026-07-28T05:15:00.000Z","avg":7,"gust":7,"directionDegree":0,"temp":21.3},
-{"datetime":"2026-07-28T05:10:00.000Z","avg":8,"gust":10,"directionDegree":225,"temp":21.3},
-{"datetime":"2026-07-28T05:05:00.000Z","avg":11,"gust":12,"directionDegree":315,"temp":21.2}
+{"datetime":"2026-07-28T05:15:00.000Z","avg":7,"gust":7,"directionDegree":0,"temp":21.3}
 ]
