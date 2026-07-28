@@ -1,3 +1,5 @@
+// rebuild 2
+
 async function loadWindData() {
     const url = "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30";
 
