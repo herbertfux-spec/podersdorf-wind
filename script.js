@@ -1,4 +1,4 @@
-// rebuild 2
+// rebuild 3
 
 async function loadWindData() {
     const url = "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30";
@@ -7,7 +7,9 @@ async function loadWindData() {
         const response = await fetch(url, { cache: "no-store" });
         const json = await response.json();
 
-        const data = json.data;
+        // API liefert direkt ein Array, NICHT json.data
+        const data = json;
+
         renderWind(data);
 
     } catch (error) {
@@ -48,6 +50,7 @@ function renderWind(data) {
 
         const beaufort = toBeaufort(kn);
 
+        // Jede zweite Zeile anzeigen
         if (index % 2 !== 0) return;
 
         const tr = document.createElement("tr");
@@ -62,7 +65,7 @@ function renderWind(data) {
 
         tbody.appendChild(tr);
     });
-#
+
     const now = new Date();
     document.getElementById("update").innerText =
         "Aktualisiert: " +
