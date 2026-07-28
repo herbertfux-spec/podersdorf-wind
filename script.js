@@ -40,7 +40,6 @@ function renderWind(data) {
 
     data.forEach((entry, index) => {
 
-        // API-Felder richtig zuordnen
         const ts = new Date(entry.datetime);
         const kn = entry.avg;
         const dir = entry.directionDegree;
