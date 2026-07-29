@@ -29,6 +29,13 @@
 
     #windChart {
         text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #chartTime {
+        text-align: center;
+        font-size: 13px;
+        color: #666;
         margin-bottom: 20px;
     }
 
@@ -60,10 +67,6 @@
     tr:nth-child(even) {
         background: #fafafa;
     }
-
-    td div {
-        line-height: 1;
-    }
 </style>
 </head>
 
@@ -72,8 +75,8 @@
 <h1>Podersdorf Wind aktuell</h1>
 <div id="update">Aktualisiert:</div>
 
-<!-- Mini-Diagramm oberhalb der Tabelle -->
 <div id="windChart"></div>
+<div id="chartTime"></div>
 
 <table>
 <thead>
