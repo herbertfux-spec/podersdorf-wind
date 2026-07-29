@@ -21,7 +21,7 @@ async function loadWindData() {
     }
 }
 
-// Himmelsrichtung aus Grad berechnen
+// Himmelsrichtung aus Grad berech Öl nen
 function windHimmelsrichtung(deg){
     if (deg >= 337.5 || deg < 22.5) return "N";
     if (deg >= 22.5 && deg < 67.5) return "NO";
@@ -41,6 +41,8 @@ function rotateArrow(deg) {
 
 // Farblogik für Wind & Gust
 function windColor(kn) {
+
+    if (!Number.isFinite(kn)) return "inherit";
 
     // < 10 kt: weiß → grau
     if (kn < 10) {
@@ -86,8 +88,8 @@ function renderWind(data) {
     data.forEach((entry, index) => {
 
         const ts = new Date(entry.datetime);
-        const kn = entry.avg;
-        const gust = entry.gust ?? "-";
+        const kn = Number(entry.avg);
+        const gust = Number(entry.gust);
         const temp = entry.temp ?? "-";
         const dir = entry.directionDegree;
 
@@ -98,4 +100,29 @@ function renderWind(data) {
 
         const tr = document.createElement("tr");
 
-        // *** NEUE SPALTENREIHENFOLGE + FARBLOGIK
+        tr.innerHTML = `
+            <td>${ts.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" })}</td>
+
+            <td style="text-align:center;">
+                <div style="${rotateArrow(dir)}">↑</div>
+                <div style="font-size:14px; font-weight:600; margin-top:-4px;">${himmel}</div>
+            </td>
+
+            <td style="background:${windColor(kn)}">${kn.toFixed(1)}</td>
+
+            <td style="background:${windColor(gust)}">${gust.toFixed(1)}</td>
+
+            <td>${temp.toFixed ? temp.toFixed(1) : temp}°C</td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+
+    const now = new Date();
+    document.getElementById("update").innerText =
+        "Aktualisiert: " +
+        now.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+loadWindData();
+setInterval(loadWindData, 60000);
