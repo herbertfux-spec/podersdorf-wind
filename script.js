@@ -1,7 +1,8 @@
 // rebuild 4 – API liefert direkt ein Array
 
 async function loadWindData() {
-    const url = "https://www.getnora.app/api/station/kite2fly-podersdorf?limit=30";
+    const url = "https://still-wind-ddce.herbert-fux.workers.dev";
+
 
     try {
         const response = await fetch(url, { cache: "no-store" });
