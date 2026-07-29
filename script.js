@@ -66,24 +66,33 @@ function drawChart() {
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
-    const width = w.length * 24;   // <<< BREITE = 24 px pro Punkt
+    const width = w.length * 24;
 
     const windPoints = w.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
     const gustPoints = g.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
 
+    const y0 = scaleY(min);
     const y12 = scaleY(12);
     const y20 = scaleY(20);
+    const y29 = scaleY(29);
+    const yMax = scaleY(max);
 
     const svg = `
         <svg width="${width}" height="120">
 
+            <!-- Hintergrundbereiche -->
+            <rect x="0" y="${y0}" width="${width}" height="${y12 - y0}" fill="#eaeaea" opacity="0.5"/>
+            <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.5"/>
+            <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.5"/>
+            <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.5"/>
+
             <!-- Hilfslinie 12 kt -->
-            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#cccccc" stroke-dasharray="4"/>
-            <text x="5" y="${y12 - 5}" font-size="12" fill="#666">12 kt</text>
+            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#888" stroke-dasharray="4"/>
+            <text x="5" y="${y12 - 5}" font-size="12" fill="#444">12 kt</text>
 
             <!-- Hilfslinie 20 kt -->
-            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#bbbbbb" stroke-dasharray="4"/>
-            <text x="5" y="${y20 - 5}" font-size="12" fill="#666">20 kt</text>
+            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#888" stroke-dasharray="4"/>
+            <text x="5" y="${y20 - 5}" font-size="12" fill="#444">20 kt</text>
 
             <!-- Wind -->
             <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
