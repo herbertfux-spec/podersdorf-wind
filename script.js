@@ -61,7 +61,6 @@ function drawChart() {
     const g = fullGust.slice().reverse();
     const t = fullTime.slice().reverse();
 
-    // Graph erst ab 4 kt anzeigen
     const rawMin = Math.min(...w, ...g);
     const min = Math.max(rawMin, 4);
     const max = Math.max(...w, ...g);
@@ -125,9 +124,6 @@ function drawChart() {
         &nbsp;&nbsp;
         <span style="color:#d9534f; font-weight:bold;">- - - Gust</span>
     `;
-
-    document.getElementById("chartTime").innerText =
-        `${t[0]}  —  ${t[t.length - 1]}`;
 }
 
 function renderWind(data) {
