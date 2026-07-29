@@ -78,7 +78,7 @@ function drawChart() {
     const yMax = scaleY(max);
 
     const svg = `
-        <svg width="${width}" height="120">
+        <svg width="${width}" height="140">
 
             <!-- Hintergrundbereiche -->
             <rect x="0" y="${y0}" width="${width}" height="${y12 - y0}" fill="#eaeaea" opacity="0.5"/>
@@ -87,18 +87,32 @@ function drawChart() {
             <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.5"/>
 
             <!-- Hilfslinie 12 kt -->
-            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#888" stroke-dasharray="4"/>
-            <text x="5" y="${y12 - 5}" font-size="12" fill="#444">12 kt</text>
+            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" 
+                  stroke="#666" stroke-width="2" stroke-dasharray="4" opacity="0.9"/>
+            <text x="8" y="${y12 - 6}" font-size="14" fill="#222" font-weight="600">12 kt</text>
 
             <!-- Hilfslinie 20 kt -->
-            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#888" stroke-dasharray="4"/>
-            <text x="5" y="${y20 - 5}" font-size="12" fill="#444">20 kt</text>
+            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" 
+                  stroke="#555" stroke-width="2" stroke-dasharray="4" opacity="0.9"/>
+            <text x="8" y="${y20 - 6}" font-size="14" fill="#222" font-weight="600">20 kt</text>
 
             <!-- Wind -->
             <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
 
-            <!-- Gust -->
-            <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2"/>
+            <!-- Gust (gestrichelt) -->
+            <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2" stroke-dasharray="6 4"/>
+
+            <!-- Zeitachse unten -->
+            <line x1="0" y1="135" x2="${width}" y2="135" stroke="#333" stroke-width="2"/>
+
+            <!-- Zeitmarken -->
+            ${t.map((time, i) => {
+                if (i % 6 !== 0) return "";
+                return `
+                    <line x1="${i * 24}" y1="135" x2="${i * 24}" y2="130" stroke="#333" stroke-width="2"/>
+                    <text x="${i * 24 + 3}" y="145" font-size="12" fill="#333">${time}</text>
+                `;
+            }).join("")}
         </svg>
     `;
 
@@ -107,7 +121,7 @@ function drawChart() {
     document.getElementById("chartLegend").innerHTML = `
         <span style="color:#1f4e78; font-weight:bold;">──── Wind</span>
         &nbsp;&nbsp;
-        <span style="color:#d9534f; font-weight:bold;">──── Gust</span>
+        <span style="color:#d9534f; font-weight:bold;">- - - Gust</span>
     `;
 
     document.getElementById("chartTime").innerText =
