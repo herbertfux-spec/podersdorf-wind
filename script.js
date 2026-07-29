@@ -42,11 +42,16 @@ function rotateArrow(deg) {
 // Farblogik für Wind & Gust
 function windColor(kn) {
 
-    if (!Number.isFinite(kn)) return "inherit";
+    if (!Number.isFinite(kn)) return "rgb(255,255,255)";
 
-    // < 10 kt: weiß → grau
-    if (kn < 10) {
-        const t = kn / 10;
+    // 0–5 kt: immer weiß
+    if (kn <= 5) {
+        return "rgb(255,255,255)";
+    }
+
+    // 5–10 kt: weiß → grau
+    if (kn > 5 && kn < 10) {
+        const t = (kn - 5) / 5; // 0 bis 1
         const gray = Math.round(255 - t * 120);
         return `rgb(${gray},${gray},${gray})`;
     }
@@ -77,6 +82,10 @@ function windColor(kn) {
         const b = Math.round(60 - t * 40);
         return `rgb(${r},${g},${b})`;
     }
+
+    return "rgb(255,255,255)";
+}
+
 
     return "inherit";
 }
