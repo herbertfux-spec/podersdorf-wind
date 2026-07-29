@@ -39,6 +39,46 @@ function rotateArrow(deg) {
     return `transform: rotate(${deg}deg); font-size: 28px; font-weight: 700; display:block; text-align:center;`;
 }
 
+// Farblogik für Wind & Gust
+function windColor(kn) {
+
+    // < 10 kt: weiß → grau
+    if (kn < 10) {
+        const t = kn / 10;
+        const gray = Math.round(255 - t * 120);
+        return `rgb(${gray},${gray},${gray})`;
+    }
+
+    // 10–20 kt: hellgrün → dunkelgrün
+    if (kn >= 10 && kn < 20) {
+        const t = (kn - 10) / 10;
+        const r = Math.round(180 - t * 80);
+        const g = Math.round(255 - t * 155);
+        const b = Math.round(180 - t * 80);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // 20–29 kt: hellgelb → dunkleres gelb
+    if (kn >= 20 && kn < 29) {
+        const t = (kn - 20) / 9;
+        const r = Math.round(255 - t * 40);
+        const g = Math.round(240 - t * 100);
+        const b = Math.round(120 - t * 60);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    // ≥ 29 kt: hellorange → dunkelorange
+    if (kn >= 29) {
+        const t = Math.min((kn - 29) / 10, 1);
+        const r = Math.round(255 - t * 80);
+        const g = Math.round(180 - t * 120);
+        const b = Math.round(60 - t * 40);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    return "inherit";
+}
+
 function renderWind(data) {
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = "";
@@ -58,30 +98,4 @@ function renderWind(data) {
 
         const tr = document.createElement("tr");
 
-        // *** NEUE SPALTENREIHENFOLGE ***
-        tr.innerHTML = `
-            <td>${ts.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" })}</td>
-
-            <td style="text-align:center;">
-                <div style="${rotateArrow(dir)}">↑</div>
-                <div style="font-size:14px; font-weight:600; margin-top:-4px;">${himmel}</div>
-            </td>
-
-            <td>${kn.toFixed(1)}</td>
-
-            <td>${gust.toFixed ? gust.toFixed(1) : gust}</td>
-
-            <td>${temp.toFixed ? temp.toFixed(1) : temp}°C</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-
-    const now = new Date();
-    document.getElementById("update").innerText =
-        "Aktualisiert: " +
-        now.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-}
-
-loadWindData();
-setInterval(loadWindData, 60000);
+        // *** NEUE SPALTENREIHENFOLGE + FARBLOGIK
