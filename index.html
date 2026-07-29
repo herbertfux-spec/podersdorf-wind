@@ -36,7 +36,6 @@
     #windChart {
         text-align: center;
         margin-bottom: 5px;
-        position: relative;
         overflow-x: auto;
     }
 
@@ -45,19 +44,6 @@
         font-size: 13px;
         color: #666;
         margin-bottom: 20px;
-    }
-
-    #tooltip {
-        position: absolute;
-        background: white;
-        border: 1px solid #ccc;
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 13px;
-        pointer-events: none;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        display: none;
-        z-index: 10;
     }
 
     table {
@@ -97,11 +83,7 @@
 <div id="update">Aktualisiert:</div>
 
 <div id="chartLegend"></div>
-
-<div id="windChart">
-    <div id="tooltip"></div>
-</div>
-
+<div id="windChart"></div>
 <div id="chartTime"></div>
 
 <table>
