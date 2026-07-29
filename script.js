@@ -66,10 +66,10 @@ function drawChart() {
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
-    const width = w.length * 48;   // <<< BREITERER GRAPH (48 px pro Punkt)
+    const width = w.length * 36;   // <<< BREITE = 36 px pro Punkt
 
-    const windPoints = w.map((v, i) => `${i * 48},${scaleY(v)}`).join(" ");
-    const gustPoints = g.map((v, i) => `${i * 48},${scaleY(v)}`).join(" ");
+    const windPoints = w.map((v, i) => `${i * 36},${scaleY(v)}`).join(" ");
+    const gustPoints = g.map((v, i) => `${i * 36},${scaleY(v)}`).join(" ");
 
     const y12 = scaleY(12);
     const y20 = scaleY(20);
