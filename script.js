@@ -7,7 +7,6 @@ async function loadWindData() {
 
     try {
         const response = await fetch(url, { cache: "no-store" });
-
         if (!response.ok) throw new Error("API antwortet nicht korrekt");
 
         const data = await response.json();
@@ -65,25 +64,42 @@ function drawChart() {
     const max = Math.max(...w, ...g);
     const min = Math.min(...w, ...g);
 
-    const scaleY = v => 80 - ((v - min) / (max - min || 1)) * 80;
+    const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
-    const windPoints = w.map((v, i) => `${i * 6},${scaleY(v)}`).join(" ");
-    const gustPoints = g.map((v, i) => `${i * 6},${scaleY(v)}`).join(" ");
+    const windPoints = w.map((v, i) => `${i * 12},${scaleY(v)}`).join(" ");
+    const gustPoints = g.map((v, i) => `${i * 12},${scaleY(v)}`).join(" ");
+
+    const width = w.length * 12;
 
     const y12 = scaleY(12);
     const y20 = scaleY(20);
 
     const svg = `
-        <svg width="${w.length * 6}" height="100">
-            <line x1="0" y1="${y12}" x2="${w.length * 6}" y2="${y12}" stroke="#cccccc" stroke-dasharray="4"/>
-            <line x1="0" y1="${y20}" x2="${w.length * 6}" y2="${y20}" stroke="#bbbbbb" stroke-dasharray="4"/>
+        <svg width="${width}" height="120">
 
+            <!-- Hilfslinie 12 kt -->
+            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#cccccc" stroke-dasharray="4"/>
+            <text x="${width - 40}" y="${y12 - 5}" font-size="12" fill="#666">12 kt</text>
+
+            <!-- Hilfslinie 20 kt -->
+            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#bbbbbb" stroke-dasharray="4"/>
+            <text x="${width - 40}" y="${y20 - 5}" font-size="12" fill="#666">20 kt</text>
+
+            <!-- Wind -->
             <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
+
+            <!-- Gust -->
             <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2"/>
         </svg>
     `;
 
     document.getElementById("windChart").innerHTML = svg;
+
+    document.getElementById("chartLegend").innerHTML = `
+        <span style="color:#1f4e78; font-weight:bold;">──── Wind</span>
+        &nbsp;&nbsp;
+        <span style="color:#d9534f; font-weight:bold;">──── Gust</span>
+    `;
 
     document.getElementById("chartTime").innerText =
         `${t[0]}  —  ${t[t.length - 1]}`;
