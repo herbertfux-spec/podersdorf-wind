@@ -1,7 +1,7 @@
 // rebuild 4 – API liefert direkt ein Array
 
 async function loadWindData() {
-    const url = "https://still-wind-ddce.herbert-fux.workers.dev";
+    const url = "https://green-mouse-13a7.herbert-fux.workers.dev";
 
 
     try {
