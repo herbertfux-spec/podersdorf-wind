@@ -27,11 +27,16 @@
         color: #555;
     }
 
+    #windChart {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
         background: white;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
@@ -42,6 +47,7 @@
         font-size: 15px;
         border-bottom: 2px solid #ccc;
         text-align: center;
+        font-weight: 600;
     }
 
     td {
@@ -54,6 +60,10 @@
     tr:nth-child(even) {
         background: #fafafa;
     }
+
+    td div {
+        line-height: 1;
+    }
 </style>
 </head>
 
@@ -61,6 +71,9 @@
 
 <h1>Podersdorf Wind aktuell</h1>
 <div id="update">Aktualisiert:</div>
+
+<!-- Mini-Diagramm oberhalb der Tabelle -->
+<div id="windChart"></div>
 
 <table>
 <thead>
