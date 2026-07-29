@@ -3,59 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌬 Podersdorf Wind</title>
-
+<title>Podersdorf Wind aktuell</title>
 
 <style>
-body{
-    font-family:Arial,sans-serif;
-    max-width:900px;
-    margin:20px auto;
-    padding:15px;
-    background:#f5f7fa;
-}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 15px;
+        background: #f7f7f7;
+        color: #333;
+    }
 
-h1{
-    text-align:center;
-    color:#1f4e78;
-}
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
 
-#update{
-    text-align:center;
-    margin-bottom:15px;
-    color:#666;
-}
+    #update {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 15px;
+        color: #555;
+    }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
 
-th{
-    background:#1f4e78;
-    color:white;
-    padding:10px;
-}
+    th {
+        background: #eaeaea;
+        padding: 10px;
+        font-size: 15px;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+    }
 
-td{
-    text-align:center;
-    padding:4px 8px;
-    border-bottom:1px solid #ddd;
-    line-height:1.15;
-}
+    td {
+        padding: 8px;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
 
-tr{
-    height:30px;
-}
+    tr:nth-child(even) {
+        background: #fafafa;
+    }
 </style>
 </head>
 
 <body>
 
-<h1>🌬 Podersdorf Wind aktuell</h1>
-
-<div id="update">Lade Daten...</div>
+<h1>Podersdorf Wind aktuell</h1>
+<div id="update">Aktualisiert:</div>
 
 <table>
 <thead>
@@ -67,13 +72,10 @@ tr{
     <th>Temp</th>
 </tr>
 </thead>
-
-
 <tbody id="tbody"></tbody>
 </table>
 
-
-<script src="script.js?v1001"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
