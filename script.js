@@ -71,46 +71,46 @@ function drawChart() {
     const windPoints = w.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
     const gustPoints = g.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
 
-    const y0 = scaleY(min);
+    const yMin = scaleY(min);
     const y12 = scaleY(12);
     const y20 = scaleY(20);
     const y29 = scaleY(29);
     const yMax = scaleY(max);
 
     const svg = `
-        <svg width="${width}" height="140">
+        <svg width="${width}" height="160">
 
             <!-- Hintergrundbereiche -->
-            <rect x="0" y="${y0}" width="${width}" height="${y12 - y0}" fill="#eaeaea" opacity="0.5"/>
-            <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.5"/>
-            <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.5"/>
-            <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.5"/>
+            <rect x="0" y="${yMin}" width="${width}" height="${y12 - yMin}" fill="#eaeaea" opacity="0.55"/>
+            <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.55"/>
+            <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.55"/>
+            <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.55"/>
 
             <!-- Hilfslinie 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" 
-                  stroke="#666" stroke-width="2" stroke-dasharray="4" opacity="0.9"/>
-            <text x="8" y="${y12 - 6}" font-size="14" fill="#222" font-weight="600">12 kt</text>
+                  stroke="#444" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
+            <text x="10" y="${y12 - 8}" font-size="16" fill="#111" font-weight="700">12 kt</text>
 
             <!-- Hilfslinie 20 kt -->
             <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" 
-                  stroke="#555" stroke-width="2" stroke-dasharray="4" opacity="0.9"/>
-            <text x="8" y="${y20 - 6}" font-size="14" fill="#222" font-weight="600">20 kt</text>
+                  stroke="#333" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
+            <text x="10" y="${y20 - 8}" font-size="16" fill="#111" font-weight="700">20 kt</text>
 
             <!-- Wind -->
             <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
 
-            <!-- Gust (gestrichelt) -->
+            <!-- Gust (jetzt wirklich gestrichelt) -->
             <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2" stroke-dasharray="6 4"/>
 
             <!-- Zeitachse unten -->
-            <line x1="0" y1="135" x2="${width}" y2="135" stroke="#333" stroke-width="2"/>
+            <line x1="0" y1="150" x2="${width}" y2="150" stroke="#222" stroke-width="2"/>
 
             <!-- Zeitmarken -->
             ${t.map((time, i) => {
                 if (i % 6 !== 0) return "";
                 return `
-                    <line x1="${i * 24}" y1="135" x2="${i * 24}" y2="130" stroke="#333" stroke-width="2"/>
-                    <text x="${i * 24 + 3}" y="145" font-size="12" fill="#333">${time}</text>
+                    <line x1="${i * 24}" y1="150" x2="${i * 24}" y2="145" stroke="#222" stroke-width="2"/>
+                    <text x="${i * 24 + 3}" y="165" font-size="12" fill="#222">${time}</text>
                 `;
             }).join("")}
         </svg>
