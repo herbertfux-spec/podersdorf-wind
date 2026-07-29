@@ -21,7 +21,7 @@ async function loadWindData() {
     }
 }
 
-// Himmelsrichtung aus Grad berech Öl nen
+// Himmelsrichtung aus Grad berechnen
 function windHimmelsrichtung(deg){
     if (deg >= 337.5 || deg < 22.5) return "N";
     if (deg >= 22.5 && deg < 67.5) return "NO";
@@ -84,10 +84,6 @@ function windColor(kn) {
     }
 
     return "rgb(255,255,255)";
-}
-
-
-    return "inherit";
 }
 
 function renderWind(data) {
