@@ -66,30 +66,42 @@ function drawChart() {
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
+    const width = w.length * 12;
+
     const windPoints = w.map((v, i) => `${i * 12},${scaleY(v)}`).join(" ");
     const gustPoints = g.map((v, i) => `${i * 12},${scaleY(v)}`).join(" ");
-
-    const width = w.length * 12;
 
     const y12 = scaleY(12);
     const y20 = scaleY(20);
 
     const svg = `
-        <svg width="${width}" height="120">
+        <svg id="chartSVG" width="${width}" height="120" style="cursor:crosshair">
 
             <!-- Hilfslinie 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#cccccc" stroke-dasharray="4"/>
-            <text x="${width - 40}" y="${y12 - 5}" font-size="12" fill="#666">12 kt</text>
+            <text x="5" y="${y12 - 5}" font-size="12" fill="#666">12 kt</text>
 
             <!-- Hilfslinie 20 kt -->
             <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#bbbbbb" stroke-dasharray="4"/>
-            <text x="${width - 40}" y="${y20 - 5}" font-size="12" fill="#666">20 kt</text>
+            <text x="5" y="${y20 - 5}" font-size="12" fill="#666">20 kt</text>
 
             <!-- Wind -->
-            <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
+            <polyline id="windLine" points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
 
             <!-- Gust -->
-            <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2"/>
+            <polyline id="gustLine" points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2"/>
+
+            <!-- Hover-Linie -->
+            <line id="hoverLine" x1="0" y1="0" x2="0" y2="120" stroke="#888" stroke-width="1" visibility="hidden"/>
+
+            <!-- Wind-Punkt -->
+            <circle id="windDot" r="4" fill="#1f4e78" visibility="hidden"/>
+
+            <!-- Gust-Punkt -->
+            <circle id="gustDot" r="4" fill="#d9534f" visibility="hidden"/>
+
+            <!-- Hover-Layer -->
+            <rect id="hoverArea" width="${width}" height="120" fill="transparent"/>
         </svg>
     `;
 
@@ -103,6 +115,69 @@ function drawChart() {
 
     document.getElementById("chartTime").innerText =
         `${t[0]}  —  ${t[t.length - 1]}`;
+
+    const tooltip = document.getElementById("tooltip");
+    const hoverArea = document.getElementById("hoverArea");
+    const hoverLine = document.getElementById("hoverLine");
+    const windDot = document.getElementById("windDot");
+    const gustDot = document.getElementById("gustDot");
+
+    function handleHover(clientX, clientY) {
+        const rect = hoverArea.getBoundingClientRect();
+        const x = clientX - rect.left;
+
+        const index = Math.round(x / 12);
+        if (index < 0 || index >= w.length) return;
+
+        const wx = index * 12;
+        const wy = scaleY(w[index]);
+        const gy = scaleY(g[index]);
+
+        hoverLine.setAttribute("x1", wx);
+        hoverLine.setAttribute("x2", wx);
+        hoverLine.setAttribute("visibility", "visible");
+
+        windDot.setAttribute("cx", wx);
+        windDot.setAttribute("cy", wy);
+        windDot.setAttribute("visibility", "visible");
+
+        gustDot.setAttribute("cx", wx);
+        gustDot.setAttribute("cy", gy);
+        gustDot.setAttribute("visibility", "visible");
+
+        tooltip.style.left = (wx + rect.left + 15) + "px";
+        tooltip.style.top = (rect.top + wy - 20) + "px";
+        tooltip.style.display = "block";
+
+        tooltip.innerHTML = `
+            <b>${t[index]}</b><br>
+            Wind: ${w[index].toFixed(1)} kt<br>
+            Gust: ${g[index].toFixed(1)} kt
+        `;
+    }
+
+    hoverArea.addEventListener("mousemove", e => {
+        handleHover(e.clientX, e.clientY);
+    });
+
+    hoverArea.addEventListener("mouseleave", () => {
+        hoverLine.setAttribute("visibility", "hidden");
+        windDot.setAttribute("visibility", "hidden");
+        gustDot.setAttribute("visibility", "hidden");
+        tooltip.style.display = "none";
+    });
+
+    hoverArea.addEventListener("touchmove", e => {
+        const touch = e.touches[0];
+        handleHover(touch.clientX, touch.clientY);
+    });
+
+    hoverArea.addEventListener("touchend", () => {
+        hoverLine.setAttribute("visibility", "hidden");
+        windDot.setAttribute("visibility", "hidden");
+        gustDot.setAttribute("visibility", "hidden");
+        tooltip.style.display = "none";
+    });
 }
 
 function renderWind(data) {
