@@ -122,7 +122,7 @@ function drawChart() {
     document.getElementById("chartLegend").innerHTML = `
         <span style="color:#1f4e78; font-weight:bold;">──── Wind</span>
         &nbsp;&nbsp;
-        <span style="color:#d9534f; font-weight:bold;">- - - Gust</span>
+        <span style="color:#d9534f; font-weight:bold;">- - - Gusts</span>
     `;
 }
 
