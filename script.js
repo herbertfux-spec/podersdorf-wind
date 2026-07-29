@@ -1,5 +1,7 @@
 // rebuild 4 – API liefert direkt ein Array
 
+let fullHistory = []; // Gesamtverlauf für Mini-Diagramm
+
 async function loadWindData() {
     const url = "https://green-mouse-13a7.herbert-fux.workers.dev";
 
@@ -51,7 +53,7 @@ function windColor(kn) {
 
     // 5–10 kt: weiß → grau
     if (kn > 5 && kn < 10) {
-        const t = (kn - 5) / 5; // 0 bis 1
+        const t = (kn - 5) / 5;
         const gray = Math.round(255 - t * 120);
         return `rgb(${gray},${gray},${gray})`;
     }
@@ -86,9 +88,42 @@ function windColor(kn) {
     return "rgb(255,255,255)";
 }
 
+// Mini-Diagramm (Sparkline) für Gesamtverlauf
+function sparklineFull(values) {
+    if (!values || values.length === 0) return "";
+
+    const max = Math.max(...values);
+    const min = Math.min(...values);
+
+    const points = values.map((v, i) => {
+        const x = (i / (values.length - 1)) * 300;
+        const y = 60 - ((v - min) / (max - min || 1)) * 60;
+        return `${x},${y}`;
+    }).join(" ");
+
+    return `
+        <svg width="300" height="60">
+            <polyline 
+                points="${points}" 
+                fill="none" 
+                stroke="#1f4e78" 
+                stroke-width="3"
+                stroke-linecap="round"
+            />
+        </svg>
+    `;
+}
+
 function renderWind(data) {
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = "";
+
+    // Gesamtverlauf aktualisieren
+    fullHistory.push(...data.map(e => Number(e.avg)));
+    if (fullHistory.length > 200) fullHistory.splice(0, fullHistory.length - 200);
+
+    // Mini-Diagramm oberhalb der Tabelle aktualisieren
+    document.getElementById("windChart").innerHTML = sparklineFull(fullHistory);
 
     data.forEach((entry, index) => {
 
@@ -100,7 +135,6 @@ function renderWind(data) {
 
         const himmel = windHimmelsrichtung(dir);
 
-        // Jede zweite Zeile anzeigen
         if (index % 2 !== 0) return;
 
         const tr = document.createElement("tr");
