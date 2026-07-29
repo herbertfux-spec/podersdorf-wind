@@ -21,6 +21,7 @@ async function loadWindData() {
     }
 }
 
+// Himmelsrichtung aus Grad berechnen
 function windHimmelsrichtung(deg){
     if (deg >= 337.5 || deg < 22.5) return "N";
     if (deg >= 22.5 && deg < 67.5) return "NO";
@@ -33,24 +34,9 @@ function windHimmelsrichtung(deg){
     return "?";
 }
 
+// Schöner, dicker Windpfeil
 function rotateArrow(deg) {
     return `transform: rotate(${deg}deg); font-size: 28px; font-weight: 700; display:block; text-align:center;`;
-}
-
-function toBeaufort(kn) {
-    if (kn < 1) return 0;
-    if (kn < 4) return 1;
-    if (kn < 7) return 2;
-    if (kn < 11) return 3;
-    if (kn < 17) return 4;
-    if (kn < 22) return 5;
-    if (kn < 28) return 6;
-    if (kn < 34) return 7;
-    if (kn < 41) return 8;
-    if (kn < 48) return 9;
-    if (kn < 56) return 10;
-    if (kn < 64) return 11;
-    return 12;
 }
 
 function renderWind(data) {
@@ -67,10 +53,12 @@ function renderWind(data) {
 
         const himmel = windHimmelsrichtung(dir);
 
+        // Jede zweite Zeile anzeigen
         if (index % 2 !== 0) return;
 
         const tr = document.createElement("tr");
 
+        // *** NEUE SPALTENREIHENFOLGE ***
         tr.innerHTML = `
             <td>${ts.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" })}</td>
 
