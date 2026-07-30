@@ -31,7 +31,7 @@ function windHimmelsrichtung(deg){
 }
 
 function rotateArrow(deg) {
-    return `transform: rotate(${deg}deg); font-size: 28px; font-weight: 700; display:block; text-align:center;`;
+    return `transform: rotate(${deg+180}deg); font-size: 28px; font-weight: 700; display:block; text-align:center;`;
 }
 
 function windColor(kn) {
