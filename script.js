@@ -106,6 +106,8 @@ function drawChart() {
     const min = 4;
     const max = Math.max(...w, ...g, 12);
 
+    const avgWind = w.reduce((a,b)=>a+b,0) / w.length;
+
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
     const width = w.length * 18;
@@ -133,7 +135,7 @@ function drawChart() {
     const idxMid = Math.floor(t.length / 2);
     const idxEnd = t.length - 1;
 
-    const y4  = scaleY(4);
+    const yAvg = scaleY(avgWind);
     const y12 = scaleY(12);
     const y20 = scaleY(20);
     const y29 = scaleY(29);
@@ -150,9 +152,9 @@ function drawChart() {
             <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.55"/>
             <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.55"/>
 
-            <!-- Hilfslinie 4 kt -->
-            <line x1="0" y1="${y4}" x2="${width}" y2="${y4}" stroke="#555" stroke-width="3" stroke-dasharray="6 4"/>
-            <text x="10" y="${textPos(y4)}" font-size="16" font-weight="700">4 kt</text>
+            <!-- Dynamische Durchschnittslinie -->
+            <line x1="0" y1="${yAvg}" x2="${width}" y2="${yAvg}" stroke="#0066cc" stroke-width="3" stroke-dasharray="6 4"/>
+            <text x="10" y="${textPos(yAvg)}" font-size="16" font-weight="700">${avgWind.toFixed(1)} kt</text>
 
             <!-- Hilfslinie 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
