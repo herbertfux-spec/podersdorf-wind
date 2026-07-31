@@ -144,6 +144,30 @@ function drawChart() {
 
     const textPos = y => (y < 20 ? y + 20 : y - 10);
 
+    /* Windsurfer anzeigen, wenn Durchschnitt ≥ 12 kt */
+    const showSurfer = avgWind >= 12;
+
+    /* ANIMIERTER WINDSURFER */
+    const surferSVG = `
+        <svg width="42" height="42" viewBox="0 0 24 24">
+            <g>
+                <path fill="#0077cc" d="M3 22l4-6h2l-4 6h-2zm7-6l4 6h2l-4-6h-2zm1-2l6-10h-2l-6 10h2zm-4 0l-6-10h2l6 10h-2z"/>
+                <animateTransform 
+                    attributeName="transform"
+                    attributeType="XML"
+                    type="rotate"
+                    from="-8 12 12"
+                    to="8 12 12"
+                    dur="2s"
+                    repeatCount="indefinite"
+                />
+            </g>
+        </svg>
+    `;
+
+    const surferY = y12 - 45;
+    const surferX = width - 60;
+
     const svg = `
         <svg viewBox="0 0 ${width} 170" width="100%" height="170" preserveAspectRatio="none">
 
@@ -160,6 +184,9 @@ function drawChart() {
             <!-- 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${textPos(y12)}" font-size="16" font-weight="700">12 kt</text>
+
+            <!-- Windsurfer über 12 kt -->
+            ${showSurfer ? `<g transform="translate(${surferX},${surferY})">${surferSVG}</g>` : ""}
 
             <!-- 20 kt -->
             <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#333" stroke-width="3" stroke-dasharray="6 4"/>
