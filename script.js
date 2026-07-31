@@ -167,7 +167,6 @@ function renderWind(data) {
     fullTime = [];
 
     data.forEach((entry, index) => {
-        if (index % 2 !== 0) return;
 
         const ts = new Date(entry.datetime);
         const timeStr = ts.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" });
@@ -177,9 +176,13 @@ function renderWind(data) {
         const temp = entry.temp ?? "-";
         const dir = entry.directionDegree;
 
+        // Chart bekommt ALLE Werte
         fullWind.push(kn);
         fullGust.push(gust);
         fullTime.push(timeStr);
+
+        // Tabelle nur jeden 2.
+        if (index % 2 !== 0) return;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
