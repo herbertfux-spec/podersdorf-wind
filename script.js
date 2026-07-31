@@ -103,15 +103,7 @@ function drawChart() {
     const g = fullGust.slice().reverse();
     const t = fullTime.slice().reverse();
 
-    /* -----------------------------------------
-       Skala beginnt IMMER bei 4 kt
-    ----------------------------------------- */
     const min = 4;
-
-    /* -----------------------------------------
-       Skala geht IMMER bis mindestens 12 kt
-       => 12-kt-Linie ist garantiert sichtbar
-    ----------------------------------------- */
     const max = Math.max(...w, ...g, 12);
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
@@ -147,6 +139,8 @@ function drawChart() {
     const y29 = scaleY(29);
     const yMax = scaleY(max);
 
+    const textPos = y => (y < 20 ? y + 20 : y - 10);
+
     const svg = `
         <svg viewBox="0 0 ${width} 170" width="100%" height="170" preserveAspectRatio="none">
 
@@ -158,26 +152,26 @@ function drawChart() {
 
             <!-- Hilfslinie 4 kt -->
             <line x1="0" y1="${y4}" x2="${width}" y2="${y4}" stroke="#555" stroke-width="3" stroke-dasharray="6 4"/>
-            <text x="10" y="${y4 - 10}" font-size="16" font-weight="700">4 kt</text>
+            <text x="10" y="${textPos(y4)}" font-size="16" font-weight="700">4 kt</text>
 
-            <!-- Hilfslinie 12 kt (immer sichtbar) -->
+            <!-- Hilfslinie 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
-            <text x="10" y="${y12 - 10}" font-size="16" font-weight="700">12 kt</text>
+            <text x="10" y="${textPos(y12)}" font-size="16" font-weight="700">12 kt</text>
 
             <!-- Hilfslinie 20 kt -->
             <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#333" stroke-width="3" stroke-dasharray="6 4"/>
-            <text x="10" y="${y20 - 10}" font-size="16" font-weight="700">20 kt</text>
+            <text x="10" y="${textPos(y20)}" font-size="16" font-weight="700">20 kt</text>
 
-            <!-- Wind (glatt, dick) -->
+            <!-- Wind -->
             <path d="${windPath}" fill="none" stroke="#1f4e78" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 
-            <!-- Gust (glatt, dick, gestrichelt) -->
+            <!-- Gust -->
             <path d="${gustPath}" fill="none" stroke="#d9534f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 4"/>
 
             <!-- Zeitachse -->
             <line x1="0" y1="155" x2="${width}" y2="155" stroke="#222" stroke-width="2"/>
 
-            <!-- Zeitmarken: Anfang – Mitte – Ende -->
+            <!-- Zeitmarken -->
             <line x1="${idxStart * 18}" y1="155" x2="${idxStart * 18}" y2="150" stroke="#222" stroke-width="2"/>
             <text x="${idxStart * 18 + 3}" y="145" font-size="13">${t[idxStart]}</text>
 
@@ -211,12 +205,10 @@ function renderWind(data) {
         const temp = entry.temp ?? "-";
         const dir = entry.directionDegree;
 
-        // Chart bekommt ALLE Werte
         fullWind.push(kn);
         fullGust.push(gust);
         fullTime.push(timeStr);
 
-        // Tabelle nur jeden 2.
         if (index % 2 !== 0) return;
 
         const tr = document.createElement("tr");
