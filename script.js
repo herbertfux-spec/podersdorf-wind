@@ -104,7 +104,13 @@ function drawChart() {
     const t = fullTime.slice().reverse();
 
     const rawMin = Math.min(...w, ...g);
-    const min = Math.max(rawMin, 4);
+
+    /* -----------------------------------------
+       WICHTIG: Skala beginnt IMMER bei 0
+       Dadurch bleibt die 12-kt-Linie stabil
+    ----------------------------------------- */
+    const min = 0;
+
     const max = Math.max(...w, ...g);
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
@@ -153,7 +159,7 @@ function drawChart() {
             <line x1="0" y1="${y4}" x2="${width}" y2="${y4}" stroke="#555" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${y4 - 10}" font-size="16" font-weight="700">4 kt</text>
 
-            <!-- Hilfslinie 12 kt -->
+            <!-- Hilfslinie 12 kt (immer sichtbar, immer korrekt) -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${y12 - 10}" font-size="16" font-weight="700">12 kt</text>
 
