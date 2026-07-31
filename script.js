@@ -110,7 +110,8 @@ function drawChart() {
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
-    const width = w.length * 18;
+    /* Uhrzeitfix: +20px rechts */
+    const width = w.length * 18 + 20;
 
     const windPoints = w.map((v, i) => [i * 18, scaleY(v)]);
     const gustPoints = g.map((v, i) => [i * 18, scaleY(v)]);
@@ -152,15 +153,15 @@ function drawChart() {
             <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.55"/>
             <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.55"/>
 
-            <!-- Dynamische Durchschnittslinie -->
+            <!-- Durchschnittslinie -->
             <line x1="0" y1="${yAvg}" x2="${width}" y2="${yAvg}" stroke="#0066cc" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${textPos(yAvg)}" font-size="16" font-weight="700">${avgWind.toFixed(1)} kt</text>
 
-            <!-- Hilfslinie 12 kt -->
+            <!-- 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${textPos(y12)}" font-size="16" font-weight="700">12 kt</text>
 
-            <!-- Hilfslinie 20 kt -->
+            <!-- 20 kt -->
             <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#333" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${textPos(y20)}" font-size="16" font-weight="700">20 kt</text>
 
@@ -180,8 +181,9 @@ function drawChart() {
             <line x1="${idxMid * 18}" y1="155" x2="${idxMid * 18}" y2="150" stroke="#222" stroke-width="2"/>
             <text x="${idxMid * 18 + 3}" y="145" font-size="13">${t[idxMid]}</text>
 
+            <!-- Uhrzeitfix rechts -->
             <line x1="${idxEnd * 18}" y1="155" x2="${idxEnd * 18}" y2="150" stroke="#222" stroke-width="2"/>
-            <text x="${idxEnd * 18 + 3}" y="145" font-size="13">${t[idxEnd]}</text>
+            <text x="${idxEnd * 18 - 10}" y="145" font-size="13">${t[idxEnd]}</text>
 
         </svg>
     `;
