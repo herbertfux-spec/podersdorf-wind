@@ -106,10 +106,9 @@ function drawChart() {
     const rawMin = Math.min(...w, ...g);
 
     /* -----------------------------------------
-       WICHTIG: Skala beginnt IMMER bei 0
-       Dadurch bleibt die 12-kt-Linie stabil
+       Skala beginnt IMMER bei 4 kt
     ----------------------------------------- */
-    const min = 0;
+    const min = 4;
 
     const max = Math.max(...w, ...g);
 
@@ -159,7 +158,7 @@ function drawChart() {
             <line x1="0" y1="${y4}" x2="${width}" y2="${y4}" stroke="#555" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${y4 - 10}" font-size="16" font-weight="700">4 kt</text>
 
-            <!-- Hilfslinie 12 kt (immer sichtbar, immer korrekt) -->
+            <!-- Hilfslinie 12 kt -->
             <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
             <text x="10" y="${y12 - 10}" font-size="16" font-weight="700">12 kt</text>
 
