@@ -30,8 +30,50 @@ function windHimmelsrichtung(deg){
     return "?";
 }
 
-function rotateArrow(deg) {
-    return `transform: rotate(${deg+180}deg); font-size: 28px; font-weight: 700; display:block; text-align:center;`;
+/* ---------------------------------------------------------
+   HEAVY ARROW BOX – dein neuer fetter Windpfeil
+--------------------------------------------------------- */
+function windArrowHeavyBox(deg) {
+    return `
+        <div style="
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:2px;
+        ">
+            <div style="
+                width:44px;
+                height:44px;
+                background:#ffffff;
+                border-radius:14px;
+                box-shadow:0 3px 8px rgba(0,0,0,0.18);
+                border:3px solid #1f4e78;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            ">
+                <span style="
+                    font-size:34px;
+                    font-weight:900;
+                    transform:rotate(${deg + 180}deg);
+                    transition:transform 0.25s ease-out;
+                    display:inline-block;
+                ">
+                    ↑
+                </span>
+            </div>
+            <div style="
+                font-size:14px;
+                margin-top:4px;
+                opacity:0.75;
+                font-family:Arial, sans-serif;
+                font-weight:600;
+            ">
+                ${windHimmelsrichtung(deg)}
+            </div>
+        </div>
+    `;
 }
 
 function windColor(kn) {
@@ -81,32 +123,22 @@ function drawChart() {
     const svg = `
         <svg width="${width}" height="170">
 
-            <!-- Hintergrundbereiche -->
             <rect x="0" y="${yMin}" width="${width}" height="${y12 - yMin}" fill="#eaeaea" opacity="0.55"/>
             <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.55"/>
             <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.55"/>
             <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.55"/>
 
-            <!-- Hilfslinie 12 kt -->
-            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" 
-                  stroke="#444" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
+            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
             <text x="10" y="${y12 - 10}" font-size="16" fill="#111" font-weight="700">12 kt</text>
 
-            <!-- Hilfslinie 20 kt -->
-            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" 
-                  stroke="#333" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
+            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#333" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
             <text x="10" y="${y20 - 10}" font-size="16" fill="#111" font-weight="700">20 kt</text>
 
-            <!-- Wind -->
             <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
-
-            <!-- Gust (gestrichelt) -->
             <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2" stroke-dasharray="6 4"/>
 
-            <!-- Zeitachse unten -->
             <line x1="0" y1="155" x2="${width}" y2="155" stroke="#222" stroke-width="2"/>
 
-            <!-- Zeitmarken oberhalb der Achse -->
             ${t.map((time, i) => {
                 if (i % 6 !== 0) return "";
                 return `
@@ -149,15 +181,14 @@ function renderWind(data) {
         fullGust.push(gust);
         fullTime.push(timeStr);
 
-        const himmel = windHimmelsrichtung(dir);
-
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${timeStr}</td>
+
             <td style="text-align:center;">
-                <div style="${rotateArrow(dir)}">↑</div>
-                <div style="font-size:14px; font-weight:600; margin-top:-4px;">${himmel}</div>
+                ${windArrowHeavyBox(dir)}
             </td>
+
             <td style="background:${windColor(kn)}">${kn.toFixed(1)}</td>
             <td style="background:${windColor(gust)}">${gust.toFixed(1)}</td>
             <td>${temp.toFixed ? temp.toFixed(1) : temp}°C</td>
