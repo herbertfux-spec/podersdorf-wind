@@ -109,54 +109,73 @@ function drawChart() {
 
     const scaleY = v => 100 - ((v - min) / (max - min || 1)) * 100;
 
-    const width = w.length * 24;
+    const width = w.length * 18; // etwas schmäler
 
-    const windPoints = w.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
-    const gustPoints = g.map((v, i) => `${i * 24},${scaleY(v)}`).join(" ");
+    // Punkte vorbereiten
+    const windPoints = w.map((v, i) => [i * 18, scaleY(v)]);
+    const gustPoints = g.map((v, i) => [i * 18, scaleY(v)]);
 
-    const yMin = scaleY(min);
-    const y12 = scaleY(12);
-    const y20 = scaleY(20);
-    const y29 = scaleY(29);
-    const yMax = scaleY(max);
+    // Glättung: Pfad erzeugen
+    const makeSmoothPath = (pts) => {
+        if (pts.length < 2) return "";
+        let d = `M ${pts[0][0]},${pts[0][1]}`;
+        for (let i = 1; i < pts.length; i++) {
+            const [x, y] = pts[i];
+            const [px, py] = pts[i - 1];
+            const cx = (px + x) / 2;
+            const cy = (py + y) / 2;
+            d += ` Q ${px},${py} ${cx},${cy}`;
+        }
+        return d;
+    };
+
+    const windPath = makeSmoothPath(windPoints);
+    const gustPath = makeSmoothPath(gustPoints);
+
+    // Zeitmarken: Anfang – Mitte – Ende
+    const idxStart = 0;
+    const idxMid = Math.floor(t.length / 2);
+    const idxEnd = t.length - 1;
 
     const svg = `
         <svg viewBox="0 0 ${width} 170" width="100%" height="170" preserveAspectRatio="none">
 
+            <!-- Hintergrundbereiche -->
+            <rect x="0" y="${scaleY(min)}" width="${width}" height="${scaleY(12) - scaleY(min)}" fill="#eaeaea" opacity="0.55"/>
+            <rect x="0" y="${scaleY(12)}" width="${width}" height="${scaleY(20) - scaleY(12)}" fill="#b6e3b6" opacity="0.55"/>
+            <rect x="0" y="${scaleY(20)}" width="${width}" height="${scaleY(29) - scaleY(20)}" fill="#fff3b0" opacity="0.55"/>
+            <rect x="0" y="${scaleY(29)}" width="${width}" height="${scaleY(max) - scaleY(29)}" fill="#ffd2a0" opacity="0.55"/>
 
-            <rect x="0" y="${yMin}" width="${width}" height="${y12 - yMin}" fill="#eaeaea" opacity="0.55"/>
-            <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.55"/>
-            <rect x="0" y="${y20}" width="${width}" height="${y29 - y20}" fill="#fff3b0" opacity="0.55"/>
-            <rect x="0" y="${y29}" width="${width}" height="${yMax - y29}" fill="#ffd2a0" opacity="0.55"/>
+            <!-- Hilfslinien -->
+            <line x1="0" y1="${scaleY(12)}" x2="${width}" y2="${scaleY(12)}" stroke="#444" stroke-width="3" stroke-dasharray="6 4"/>
+            <text x="10" y="${scaleY(12) - 10}" font-size="16" font-weight="700">12 kt</text>
 
-            <line x1="0" y1="${y12}" x2="${width}" y2="${y12}" stroke="#444" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
-            <text x="10" y="${y12 - 10}" font-size="16" fill="#111" font-weight="700">12 kt</text>
+            <line x1="0" y1="${scaleY(20)}" x2="${width}" y2="${scaleY(20)}" stroke="#333" stroke-width="3" stroke-dasharray="6 4"/>
+            <text x="10" y="${scaleY(20) - 10}" font-size="16" font-weight="700">20 kt</text>
 
-            <line x1="0" y1="${y20}" x2="${width}" y2="${y20}" stroke="#333" stroke-width="3" stroke-dasharray="6 4" opacity="0.9"/>
-            <text x="10" y="${y20 - 10}" font-size="16" fill="#111" font-weight="700">20 kt</text>
+            <!-- Wind (glatt, dick) -->
+            <path d="${windPath}" fill="none" stroke="#1f4e78" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 
-            <polyline points="${windPoints}" fill="none" stroke="#1f4e78" stroke-width="3"/>
-            <polyline points="${gustPoints}" fill="none" stroke="#d9534f" stroke-width="2" stroke-dasharray="6 4"/>
+            <!-- Gust (glatt, dick, gestrichelt) -->
+            <path d="${gustPath}" fill="none" stroke="#d9534f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 4"/>
 
+            <!-- Zeitachse -->
             <line x1="0" y1="155" x2="${width}" y2="155" stroke="#222" stroke-width="2"/>
 
-            ${t.map((time, i) => {
-                if (i % 6 !== 0) return "";
-                return `
-                    <line x1="${i * 24}" y1="155" x2="${i * 24}" y2="150" stroke="#222" stroke-width="2"/>
-                    <text x="${i * 24 + 3}" y="145" font-size="13" fill="#222">${time}</text>
-                `;
-            }).join("")}
+            <!-- Zeitmarken: Anfang – Mitte – Ende -->
+            <line x1="${idxStart * 18}" y1="155" x2="${idxStart * 18}" y2="150" stroke="#222" stroke-width="2"/>
+            <text x="${idxStart * 18 + 3}" y="145" font-size="13">${t[idxStart]}</text>
+
+            <line x1="${idxMid * 18}" y1="155" x2="${idxMid * 18}" y2="150" stroke="#222" stroke-width="2"/>
+            <text x="${idxMid * 18 + 3}" y="145" font-size="13">${t[idxMid]}</text>
+
+            <line x1="${idxEnd * 18}" y1="155" x2="${idxEnd * 18}" y2="150" stroke="#222" stroke-width="2"/>
+            <text x="${idxEnd * 18 + 3}" y="145" font-size="13">${t[idxEnd]}</text>
+
         </svg>
     `;
 
     document.getElementById("windChart").innerHTML = svg;
-
-    document.getElementById("chartLegend").innerHTML = `
-        <span style="color:#1f4e78; font-weight:bold;">──── Wind</span>
-        &nbsp;&nbsp;
-        <span style="color:#d9534f; font-weight:bold;">- - - Gusts</span>
-    `;
 }
 
 function renderWind(data) {
