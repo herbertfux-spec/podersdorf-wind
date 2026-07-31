@@ -121,7 +121,8 @@ function drawChart() {
     const yMax = scaleY(max);
 
     const svg = `
-        <svg width="${width}" height="170">
+        <svg viewBox="0 0 ${width} 170" width="100%" height="170" preserveAspectRatio="none">
+
 
             <rect x="0" y="${yMin}" width="${width}" height="${y12 - yMin}" fill="#eaeaea" opacity="0.55"/>
             <rect x="0" y="${y12}" width="${width}" height="${y20 - y12}" fill="#b6e3b6" opacity="0.55"/>
